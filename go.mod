@@ -1,4 +1,4 @@
-module gocsv
+module github.com/vchezganov/gocsv
 
 go 1.17
 
