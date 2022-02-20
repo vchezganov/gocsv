@@ -8,20 +8,50 @@ the following types and its references:
 
 ### Example
 ```go
+package main
+
+import (
+	"encoding/csv"
+	"fmt"
+	"os"
+
+	"github.com/vchezganov/gocsv"
+)
+
 type Person struct {
 	Name     string `csv:"name"`
 	Age      int    `csv:"age"`
 	Location string `csv:"city"`
 }
 
-...
+func main() {
+	f, err := os.Open("example.csv")
+	if err != nil {
+		panic(err)
+	}
 
-f, _ := os.Open("...")
-csvReader := csv.NewReader(f)
-headers, _ := csvReader.Read()
-marshaller, _ := NewMarshaller(headers)
+	csvReader := csv.NewReader(f)
+	headers, err := csvReader.Read()
+	if err != nil {
+		panic(err)
+	}
 
-model := new(Person)
-records, _ := csvReader.Read()
-_ = marshaller.Unmarshal(records, model)
+	marshaller, err := gocsv.NewMarshaller(headers)
+	if err != nil {
+		panic(err)
+	}
+
+	model := new(Person)
+	records, err := csvReader.Read()
+	if err != nil {
+		panic(err)
+	}
+
+	err = marshaller.Unmarshal(records, model)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Model: %v", model)
+}
 ```

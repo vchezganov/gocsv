@@ -1,4 +1,4 @@
-module csvparser
+module gocsv
 
 go 1.17
 
