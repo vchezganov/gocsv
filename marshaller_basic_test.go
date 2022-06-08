@@ -55,6 +55,19 @@ Kirill,22,Berlin`
 	assert.Equal(t, i, len(expectedResults))
 }
 
+func TestMarshalerNoMatchedColumn(t *testing.T) {
+	type testModel struct {
+		Number int8 `csv:"foo"`
+	}
+
+	csvUnmarshal, err := NewMarshaller([]string{"bar"})
+	assert.Nil(t, err)
+
+	m := new(testModel)
+	err = csvUnmarshal.Unmarshal([]string{"123"}, m)
+	assert.Nil(t, err)
+}
+
 func TestMarshalerIntSizeError(t *testing.T) {
 	type testModel struct {
 		Number int8 `csv:"number"`
@@ -65,5 +78,36 @@ func TestMarshalerIntSizeError(t *testing.T) {
 
 	m := new(testModel)
 	err = csvUnmarshal.Unmarshal([]string{"512"}, m)
+	assert.NotNil(t, err)
+}
+
+func TestMarshalerNotRefError(t *testing.T) {
+	csvUnmarshal, err := NewMarshaller([]string{"number"})
+	assert.Nil(t, err)
+
+	m := 0
+	err = csvUnmarshal.Unmarshal([]string{"123"}, m)
+	assert.NotNil(t, err)
+}
+
+func TestMarshalerNotStructError(t *testing.T) {
+	csvUnmarshal, err := NewMarshaller([]string{"number"})
+	assert.Nil(t, err)
+
+	m := stringPtr("")
+	err = csvUnmarshal.Unmarshal([]string{"123"}, m)
+	assert.NotNil(t, err)
+}
+
+func TestMarshalerNilStructError(t *testing.T) {
+	type testModel struct {
+		Number int8 `csv:"number"`
+	}
+
+	csvUnmarshal, err := NewMarshaller([]string{"number"})
+	assert.Nil(t, err)
+
+	var m *testModel = nil
+	err = csvUnmarshal.Unmarshal([]string{"123"}, m)
 	assert.NotNil(t, err)
 }
