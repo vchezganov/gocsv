@@ -32,3 +32,5 @@ jobs:
           else
             COLOR=orange
           fi
+          
+          curl "https://img.shields.io/badge/coavrege-$total%25-$COLOR" > badge.svg
