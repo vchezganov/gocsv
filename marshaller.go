@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+// Marshaller is an object to parse and convert CSV records into Go object.
+type Marshaller interface {
+	Unmarshal(values []string, model interface{}) (err error)
+}
+
 type marshaller struct {
 	mapHeaders map[string]uint
 }
@@ -169,6 +174,7 @@ func (p *marshaller) parseFunc(reflectRef reflect.Value, methodName, value strin
 	return err
 }
 
+// NewMarshaller creates an instance of gocsv.Marshaller with defined headers.
 func NewMarshaller(headers []string) (*marshaller, error) {
 	if len(headers) == 0 {
 		return nil, fmt.Errorf("no headers")

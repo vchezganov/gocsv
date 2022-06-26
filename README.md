@@ -15,11 +15,55 @@ return `error` if there are any errors when parsing.
 package main
 
 import (
+	"fmt"
+	"io"
+	"strings"
+
+	"github.com/vchezganov/gocsv"
+)
+
+type Person struct {
+	Name string `csv:"name"`
+	Age  uint   `csv:"age"`
+	ID   string `csv:"pass,ParseID"`
+}
+
+func (p *Person) ParseID(value string) error {
+	p.ID = fmt.Sprintf("ABC-%s", value)
+	return nil
+}
+
+func main() {
+	stringReader := strings.NewReader("age,pass,name\n32,12345,Vitaly\n45,54321,Alexey")
+
+	reader, err := gocsv.NewReader[Person](stringReader)
+	if err != nil {
+		panic(err)
+	}
+
+	for {
+		model, err := reader.Next()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			continue
+		}
+
+		fmt.Printf("Person: %v\n", *model)
+	}
+}
+```
+
+Or `Marshaller` could be used directly:
+```go
+package main
+
+import (
 	"encoding/csv"
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
+	"strings"
 
 	"github.com/vchezganov/gocsv"
 )
@@ -46,12 +90,8 @@ func (p *Person) ParseID(value string) error {
 }
 
 func main() {
-	f, err := os.Open("example.csv")
-	if err != nil {
-		panic(err)
-	}
-
-	csvReader := csv.NewReader(f)
+	s := strings.NewReader("name,age,city,passport\nVitaly,25,Bonn,10000")
+	csvReader := csv.NewReader(s)
 	headers, err := csvReader.Read()
 	if err != nil {
 		panic(err)
@@ -73,7 +113,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("Model: %v", model)
+	fmt.Printf("Person: %v\n", *model)
 }
 ```
 
