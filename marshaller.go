@@ -8,6 +8,12 @@ import (
 	"strings"
 )
 
+// ErrNilPointer means that used not-initialized pointer
+var ErrNilPointer = errors.New("model must be a non-nil pointer")
+
+// ErrNotStruct means that used generic type is not a struct
+var ErrNotStruct = errors.New("model must be a struct")
+
 // Marshaller is an object to parse and convert CSV records into Go object.
 type Marshaller interface {
 	Unmarshal(values []string, model interface{}) (err error)
@@ -20,13 +26,13 @@ type marshaller struct {
 func (p *marshaller) Unmarshal(values []string, model interface{}) (err error) {
 	reflectRef := reflect.ValueOf(model)
 	if reflectRef.Kind() != reflect.Ptr || reflectRef.IsNil() {
-		return errors.New("model must be a non-nil pointer")
+		return ErrNilPointer
 	}
 
 	reflectElem := reflectRef.Elem()
 	reflectType := reflectElem.Type()
 	if reflectType.Kind() != reflect.Struct {
-		return errors.New("model must be a struct")
+		return ErrNotStruct
 	}
 
 	numFields := reflectType.NumField()

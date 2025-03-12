@@ -9,8 +9,9 @@ the following types and its references:
 In addition, you may provide own function to be used for parsing values. The function should accept `string` parameter and
 return `error` if there are any errors when parsing.
 
-### Example
+## Examples
 
+CSV records could be iterated using `Next()` method that return the model or an error if any:
 ```go
 package main
 
@@ -49,12 +50,33 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("Person: %v\n", *model)
+		fmt.Printf("Person: %v\n", model)
 	}
 }
 ```
 
-Or `Marshaller` could be used directly:
+Starting from Go 1.23 the cycle could be rewritten using simple `for` loop:
+```go
+for model, err := reader.Iter() {
+	if err != nil {
+			continue
+	}
+	
+	fmt.Printf("Person: %v\n", model)
+} 
+```
+
+`csv.Reader` is accessible through `CSVReader` field for specific CSV parsing options:
+```go
+reader, err := gocsv.NewReader[Person](stringReader)
+if err != nil {
+    panic(err)
+}
+
+reader.CSVReader.Comma = '#'
+```
+
+You may use `Marshaller` directly for complex cases:
 ```go
 package main
 
