@@ -35,6 +35,6 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("Person: %v\n", *model)
+		fmt.Printf("Person: %v\n", model)
 	}
 }
