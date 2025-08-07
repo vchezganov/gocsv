@@ -1,11 +1,11 @@
-### gocsv
+## gocsv
 Go package for parsing CSV records into structs. Currently, it supports only
 the following types and its references:
 - `int`, `int8`, `int16`, `int32`, `int64`
 - `uint`, `uint8`, `uint16`, `uint32`, `uint64`
 - `float32`, `float64`
 - `string`
-- 
+
 In addition, you may provide own function to be used for parsing values. The function should accept `string` parameter and
 return `error` if there are any errors when parsing.
 
@@ -140,7 +140,7 @@ func main() {
 ```
 
 
-### Next steps
+## Next steps
 - Support composition
 ```go
 type A struct {
